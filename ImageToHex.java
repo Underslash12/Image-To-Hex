@@ -14,17 +14,19 @@ public class ImageToHex{
 			image = new Picture(filename);
 		} catch (Exception e) { return; }
 		
-		
-		double size = Double.parseDouble((String)JOptionPane.showInputDialog(null, "Size of Hexagons (radius): ", "Size Input", JOptionPane.PLAIN_MESSAGE));
-		
 		double scale = Double.parseDouble((String)JOptionPane.showInputDialog(null,
 			String.format("Scale Factor: \n    Original Dimensions: [%1$d, %2$d]", image.getWidth(), image.getHeight()), 
 			"Scale Input", JOptionPane.PLAIN_MESSAGE, null, null, 1));
 			
-		size *= scale;
-		System.out.println(image);
+		double size = Double.parseDouble((String)JOptionPane.showInputDialog(null, 
+			// "Size of Hexagons (radius): ", 
+			String.format("Size of Hexagons (radius): \n    Current Dimensions: [%1$d, %2$d]", (int)(image.getWidth() * scale), (int)(image.getHeight() * scale)), 
+			"Size Input", JOptionPane.PLAIN_MESSAGE));
+			
+		// size *= scale;
+		// System.out.println(image);
 		image = image.scale(scale);
-		System.out.println(image);
+		// System.out.println(image);
 		
 		// System.out.println(image.getColorAt(7682, 0));
 		// if (true)
