@@ -1,5 +1,4 @@
-// import pkg.*;
-// import java.awt.Polygon;
+import pkg.*;
 import java.util.ArrayList;
 import java.io.File;
 
@@ -14,10 +13,26 @@ public class ImageToHex{
 		try {
 			image = new Picture(filename);
 		} catch (Exception e) { return; }
+		
+		
+		double size = Double.parseDouble((String)JOptionPane.showInputDialog(null, "Size of Hexagons (radius): ", "Size Input", JOptionPane.PLAIN_MESSAGE));
+		
+		double scale = Double.parseDouble((String)JOptionPane.showInputDialog(null,
+			String.format("Scale Factor: \n    Original Dimensions: [%1$d, %2$d]", image.getWidth(), image.getHeight()), 
+			"Scale Input", JOptionPane.PLAIN_MESSAGE, null, null, 1));
+			
+		size *= scale;
+		System.out.println(image);
+		image = image.scale(scale);
+		System.out.println(image);
+		
+		// System.out.println(image.getColorAt(7682, 0));
+		// if (true)
+			// return;
+		
 		Picture output = new Picture(image.getWidth(), image.getHeight());
 		int[][][] pixels = new int[image.getHeight()][image.getWidth()][2];
 		
-		double size = Double.parseDouble((String)JOptionPane.showInputDialog(null, "Size (in radius, of hexagon): ", "Size Input", JOptionPane.PLAIN_MESSAGE));
 		
 		// create hexagon array 
 		// maybe possible to remove
@@ -28,9 +43,9 @@ public class ImageToHex{
 		// double size = 30; // good for 8k
 		// double size = 50; // good for 69k
 		Hexagon[][] hexPixels = new Hexagon[
-			(int)(Math.sqrt(3) * image.getHeight() / (size) + 1)
+			(int)(image.getHeight() / (Math.sqrt(3) * size / 2) + 2)
 		][
-			(int)(image.getWidth() / (size * 2) + 1)
+			(int)(image.getWidth() / (size * 3) + 1)
 		];
 		
 		// fills hexagon array and makes color arrayLIST
@@ -40,6 +55,7 @@ public class ImageToHex{
 				double x = size * 0.5 + j * size * 3;
 				if (i % 2 == 1)
 					x += 1.5 * size;
+				// x += size * 3;
 				hexPixels[i][j] = new Hexagon(x, i * Math.sqrt(3) * size / 2, size);
 				
 				colors[i][j] = new ArrayList<Color>();
@@ -49,7 +65,8 @@ public class ImageToHex{
 		// checks which hexagon a pixel is in
 		// ip and jp iterate through pixels
 		for (int ip = 0; ip < pixels.length; ip++) {
-			System.out.println("Row: " + ip);
+			if (ip % 10 == 0) 
+				System.out.println("Row: " + ip);
 			for (int jp = 0; jp < pixels[0].length; jp++) {
 				// System.out.println(ip + " | " + jp);
 				// ih and jh iterate through hexagons
@@ -66,7 +83,12 @@ public class ImageToHex{
 						if (hexPixels[ih][jh].contains(jp, ip)) {
 							pixels[ip][jp][0] = ih;
 							pixels[ip][jp][1] = jh;
-							colors[ih][jh].add(image.getColorAt(jp, ip));
+							try {
+								colors[ih][jh].add(image.getColorAt(jp, ip));
+							}
+							catch (Exception e) {
+								System.out.println(e);
+							}
 							break hexIter;
 						}
 					}
@@ -76,20 +98,22 @@ public class ImageToHex{
 		
 		/** Working */
 		// Avgs colors
-		Color[][] avgColor = new Color[hexPixels.length][hexPixels[0].length];
-		for (int i = 0; i < colors.length; i++) {
-			for (int j = 0; j < colors[0].length; j++) {
-				avgColor[i][j] = avgColor(colors[i][j]);
+		// Color[][] avgColor = new Color[hexPixels.length][hexPixels[0].length];
+		for (int i = 0; i < hexPixels.length; i++) {
+			for (int j = 0; j < hexPixels[0].length; j++) {
+				hexPixels[i][j].setColor(avgColor(colors[i][j]));
 			}
 		}
-		
+				
 		// sets colors of image to these
 		for (int i = 0; i < output.getHeight(); i++) {
 			for (int j = 0; j < output.getWidth(); j++) {
-				output.setColorAt(j, i, avgColor[pixels[i][j][0]][pixels[i][j][1]]);
+				output.setColorAt(j, i, hexPixels[pixels[i][j][0]][pixels[i][j][1]].getColor());
 			}
 		}
 		
+		
+		// Generates a unique filename
 		String output_filename = "output";
 		int i = 0;
 		while (true) {

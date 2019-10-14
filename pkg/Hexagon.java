@@ -1,3 +1,5 @@
+package pkg;
+
 import java.awt.geom.Path2D;
 // import java.awt.geom.Path2D.Double;
 
@@ -6,6 +8,7 @@ public class Hexagon {
 	private Path2D.Double pd = new Path2D.Double();
 	private double[] x;
 	private double[] y;
+	private Color c = Color.BLACK;
 	
 	public Hexagon (double x_offset, double y_offset, double size)
 	{
@@ -46,5 +49,17 @@ public class Hexagon {
 		}
 		s += "}";
 		return s;
+	}
+	
+	public Color getColor()
+	{
+		// System.out.println(c);
+		return c;
+	}
+	
+	public void setColor(Color n)
+	{
+		// System.out.println(n);
+		c = n;
 	}
 }
