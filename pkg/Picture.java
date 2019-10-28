@@ -172,7 +172,13 @@ public class Picture
 	public Picture scale(double scale)
 	{
 		// Image img = image.getScaledImage(image.getWidth() * scale, image.getHeight() * scale, Image.SCALE_FAST);
-		BufferedImage bi = new BufferedImage((int)(scale * (image.getWidth(null))), (int)(scale * (image.getHeight(null))), BufferedImage.TYPE_INT_RGB);
+		BufferedImage bi;
+		try {
+			bi = new BufferedImage((int)(scale * (image.getWidth(null))), (int)(scale * (image.getHeight(null))), BufferedImage.TYPE_INT_RGB);
+		} catch (Exception e) {
+			System.out.println(e + "\n\n\n\n\n");
+			return null;
+		}
 
 		Graphics2D grph = (Graphics2D) bi.getGraphics();
 		grph.scale(scale, scale);

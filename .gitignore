@@ -1,5 +1,7 @@
 *.bat
 *.class
+*.png
+*.jpg
 test.java
 Images/
 Complete/
